@@ -16,7 +16,6 @@
 #  index_activity_items_on_user_id      (user_id)
 #
 describe ActivityItem, type: :model do
-  # shoulda boilerplate
   subject { act = ActivityItem.new() }
 
   %i[
