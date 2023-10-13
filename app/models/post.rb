@@ -27,4 +27,8 @@ class Post < ApplicationRecord
 
   belongs_to :user
   has_many :comments, as: :reply
+
+  def to_s
+    post.title
+  end
 end

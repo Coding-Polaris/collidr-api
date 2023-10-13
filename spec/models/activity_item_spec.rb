@@ -27,4 +27,6 @@ describe ActivityItem, type: :model do
   ].each do |field|
     it { should validate_presence_of(field) }
   end
+
+  it { should belong_to :user }
 end

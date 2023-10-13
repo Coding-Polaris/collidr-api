@@ -50,6 +50,7 @@ describe User, type: :model do
   it { should have_many(:posts) }
   it { should have_many(:comments) }
   it { should have_many(:profile_comments) }
+  it { should have_many(:activity_items) }
 
   it "broadcasts when rating above four stars, but not if recent" do
     ratee = user
@@ -57,10 +58,18 @@ describe User, type: :model do
     create(:rating, rater: create(:user), ratee: ratee, value: 4)
     ratee.send(:update_rating)
     expect { ratee.save }.to broadcast(:user_above_four_stars, ratee)
+    last_item = ActivityItem.last
+    expect(last_item).to have_attributes(
+      activity_type: "User",
+      activity_id: user.id,
+      user_id: user.id,
+      description: "just broke a 4-star rating!"
+    )
 
     create(:rating, rater: create(:user), ratee: ratee, value: 5)
     ratee.send(:update_rating)
     expect { ratee.save }.to_not broadcast(:user_above_four_stars, ratee)
+    expect(last_item).to eq(ActivityItem.last)
   end
 
   describe "#email" do

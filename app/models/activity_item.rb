@@ -28,4 +28,8 @@ class ActivityItem < ApplicationRecord
   ].each do |field|
     validates field, presence: true
   end
+
+  def to_s
+    "Activity: #{user} #{description}"
+  end
 end

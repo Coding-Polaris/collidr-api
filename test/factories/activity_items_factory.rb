@@ -19,5 +19,6 @@ FactoryBot.define do
   factory :activity_item do
     description { Faker::Lorem.sentence }
     activity { create(:user) }
+    user { association(:user) }
   end
 end
