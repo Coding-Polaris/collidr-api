@@ -1,3 +1,0 @@
-class UserActivity
-  include
-end
