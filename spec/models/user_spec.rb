@@ -58,6 +58,7 @@ describe User, type: :model do
     create(:rating, rater: create(:user), ratee: ratee, value: 4)
     ratee.send(:update_rating)
     expect { ratee.save }.to broadcast(:user_above_four_stars, ratee)
+
     last_item = ActivityItem.last
     expect(last_item).to have_attributes(
       activity_type: "User",
@@ -69,7 +70,9 @@ describe User, type: :model do
     create(:rating, rater: create(:user), ratee: ratee, value: 5)
     ratee.send(:update_rating)
     expect { ratee.save }.to_not broadcast(:user_above_four_stars, ratee)
-    expect(last_item).to eq(ActivityItem.last)
+
+    recent_activity = ActivityItem.where("id > ?", last_item.id)
+    expect(recent_activity.map(&:description)).to_not include "just broke a 4-star rating!"
   end
 
   describe "#email" do

@@ -29,6 +29,9 @@ class ActivityItem < ApplicationRecord
     validates field, presence: true
   end
 
+  belongs_to :user
+  belongs_to :activity, polymorphic: true
+
   def to_s
     "Activity: #{user} #{description}"
   end

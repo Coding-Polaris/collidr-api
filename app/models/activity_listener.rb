@@ -2,7 +2,7 @@
 
 class ActivityListener
   def self.user_above_four_stars(user)
-    puts ActivityItem.create(
+    ActivityItem.create(
       activity_type: "User",
       activity_id: user.id,
       user_id: user.id,
@@ -11,7 +11,7 @@ class ActivityListener
   end
 
   def self.created_user(user)
-    puts ActivityItem.create(
+    ActivityItem.create(
       activity_type: "User",
       activity_id: user.id,
       user_id: user.id,
@@ -20,7 +20,7 @@ class ActivityListener
   end
 
   def self.created_post(post)
-    puts ActivityItem.create(
+    ActivityItem.create(
       activity_type: "Post",
       activity_id: post.id,
       user_id: post.user.id,
@@ -41,7 +41,7 @@ class ActivityListener
       return
     end
 
-    puts ActivityItem.create(
+    ActivityItem.create(
       activity_type: "Comment",
       activity_id: comment.id,
       user_id: comment.user.id,

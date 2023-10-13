@@ -29,4 +29,5 @@ describe ActivityItem, type: :model do
   end
 
   it { should belong_to :user }
+  it { should belong_to :activity }
 end

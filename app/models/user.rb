@@ -63,6 +63,7 @@ class User < ApplicationRecord
   has_many :posts
   has_many :comments
   has_many :profile_comments, as: :reply, class_name: "Comment"
+  has_many :activity_items
 
   def github_name=(value)
     value = nil if value == ""
