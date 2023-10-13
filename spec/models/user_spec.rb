@@ -56,11 +56,11 @@ describe User, type: :model do
 
     create(:rating, rater: create(:user), ratee: ratee, value: 4)
     ratee.send(:update_rating)
-    expect { ratee.save }.to broadcast(:above_four_stars, ratee)
+    expect { ratee.save }.to broadcast(:user_above_four_stars, ratee)
 
     create(:rating, rater: create(:user), ratee: ratee, value: 5)
     ratee.send(:update_rating)
-    expect { ratee.save }.to_not broadcast(:above_four_stars, ratee)
+    expect { ratee.save }.to_not broadcast(:user_above_four_stars, ratee)
   end
 
   describe "#email" do

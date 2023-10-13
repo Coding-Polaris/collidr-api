@@ -98,7 +98,7 @@ class User < ApplicationRecord
   end
 
   def broadcast_rating_at_or_above_four_and_set_last_high_rating_broadcast_time
-    broadcast(:above_four_stars, self)
+    broadcast(:user_above_four_stars, self)
     if rating_at_or_above_four_stars && !last_high_rating_broadcast_is_recent?
       self.last_high_rating_broadcast_time = DateTime.now
     end
