@@ -28,4 +28,5 @@ RSpec.describe Comment, type: :model do
   it { should belong_to(:user) }
   it { should belong_to(:reply) }
   it { should have_many(:sub_comments) }
+  it { should have_many(:activity_items) }
 end

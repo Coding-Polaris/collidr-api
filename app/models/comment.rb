@@ -28,4 +28,5 @@ class Comment < ApplicationRecord
   belongs_to :user
   belongs_to :reply, polymorphic: true
   has_many :sub_comments, as: :reply, class_name: "Comment"
+  has_many :activity_items, as: :activity
 end
