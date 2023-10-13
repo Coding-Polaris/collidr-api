@@ -84,11 +84,14 @@ class User < ApplicationRecord
     "User\##{user.id}"
   end
 
-  def build_activity_timeline(time = DateTime.now)
+  # retrieve starting from a certain time point
+  # or from last activity
+  def build_activity_timeline(time = DateTime.now, activity_id = nil)
     items = []
     collidr_activity = ActivityItem.where("
+        user_id = ? AND
         updated_at <= ?
-      ", time)
+      ", self.id, time)
       .order("updated_at DESC")
       .limit(20)
     items += collidr_activity

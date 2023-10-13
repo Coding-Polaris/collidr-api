@@ -134,4 +134,23 @@ describe User, type: :model do
       expect(second_user.rating).to eq(4)
     end
   end
+
+  describe "#build_activity_timeline" do
+    it "should grab sorted user activity" do
+      newbie = create(:user)
+
+      rating_number = 3
+      random_events = [
+        create_list(:comment, 5, { user: newbie }),
+        create_list(:post, 5, { user: newbie }),
+        create_list(:comment, 5, { user: newbie }),
+        create_list(:rating, rating_number, { rater: newbie })
+      ].flatten.shuffle
+
+      timeline = newbie.build_activity_timeline(Time.now)
+      expect(timeline.last).to have_attributes(user_id: newbie.id, description: "signed up on Collidr!")
+      # recorded events as of this writing: comment, post, rating
+      expect(timeline.length).to eq(random_events.length - rating_number + 1)
+    end
+  end
 end

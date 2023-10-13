@@ -30,11 +30,11 @@ class ActivityListener
 
   def self.created_comment(comment)
     description = ""
-    description = case comment.reply.class
-    when User
+    description = case comment.reply.class.to_s
+    when "User"
       profile_user = comment.reply
       "commented on #{profile_user}'s profile: #{comment.body}"
-    when Post
+    when "Post"
       post = comment.reply
       "commented on #{post} by #{post.user}"
     else

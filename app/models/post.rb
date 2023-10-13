@@ -30,6 +30,6 @@ class Post < ApplicationRecord
   has_many :activity_items, as: :activity
 
   def to_s
-    post.title
+    self.title
   end
 end
