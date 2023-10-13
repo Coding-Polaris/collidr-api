@@ -21,9 +21,6 @@
 #  index_users_on_rating       (rating)
 #
 class User < ApplicationRecord
-  include Wisper::Publisher
-  include SaveBroadcaster
-
   RECENT_RATING_WINDOW = 1.month
   HIGH_RATING = 4.00
 

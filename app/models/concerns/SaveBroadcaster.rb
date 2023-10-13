@@ -14,17 +14,17 @@ module SaveBroadcaster
   end
 
   def broadcast_created
-    key = "#{object_name}_created".to_sym
+    key = "created_#{object_name}".to_sym
     broadcast(key, self)
   end
 
   def broadcast_updated
-    key = "#{object_name}_updated".to_sym
+    key = "updated_#{object_name}".to_sym
     broadcast(key, self)
   end
 
   def broadcast_validation_failed
-    key = "#{object_name}_failed".to_sym
+    key = "failed_#{object_name}".to_sym
     broadcast(key, self)
   end
 

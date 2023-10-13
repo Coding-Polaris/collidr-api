@@ -14,9 +14,6 @@
 #  index_posts_on_user_id  (user_id)
 #
 class Post < ApplicationRecord
-  include Wisper::Publisher
-  include SaveBroadcaster
-
   %i[
     body
     title
