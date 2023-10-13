@@ -23,6 +23,7 @@
 class User < ApplicationRecord
   RECENT_RATING_WINDOW = 1.month
   HIGH_RATING = 4.00
+  MAX_TIMELINE_REFRESH_ITEMS = 20
 
   %i[
     email
@@ -83,13 +84,16 @@ class User < ApplicationRecord
     "User\##{user.id}"
   end
 
-  # load up to 15 items
-  # start with server-side activity items
-  # poll github for most recent 15, doing
-  # so only when a slot on the rate-limit-respecting
-  # sidekiq queue opens up
-  def create_timeline
-
+  def build_activity_timeline(time = DateTime.now)
+    items = []
+    collidr_activity = ActivityItem.where("
+        updated_at <= ?
+      ", time)
+      .order("updated_at DESC")
+      .limit(20)
+    items += collidr_activity
+    # items.sort_by timestamp -- Not doing til git activity in
+    items[0..19]
   end
 
   private
