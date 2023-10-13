@@ -19,9 +19,7 @@
 #  fk_rails_...  (ratee_id => users.id)
 #  fk_rails_...  (rater_id => users.id)
 #
-class Rating < ActiveRecord::Base
-  include Wisper::Publisher
-
+class Rating < ApplicationRecord
   %i[rater_id ratee_id value].each do |field|
     validates field, presence: true
   end
