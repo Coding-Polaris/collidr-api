@@ -1,0 +1,3 @@
+class UserActivity
+  include
+end
