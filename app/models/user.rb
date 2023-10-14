@@ -71,7 +71,7 @@ class User < ApplicationRecord
   end
 
   def rate_user(user, value)
-    Rating.find_or_create_by(rater_id: self.id, ratee_id: user.id).update(value: value)
+    broadcast(:user_is_rating, self, user, value)
   end
 
   def to_s

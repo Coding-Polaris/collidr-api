@@ -55,9 +55,9 @@ describe User, type: :model do
   it "broadcasts when rating above four stars, but not if recent" do
     ratee = user
 
-    create(:rating, rater: create(:user), ratee: ratee, value: 4)
-    ratee.send(:update_rating)
-    expect { ratee.save }.to broadcast(:user_above_four_stars, ratee)
+    expect do
+      create(:rating, rater: create(:user), ratee: ratee, value: 4)
+    end.to broadcast(:user_above_four_stars, ratee)
 
     last_item = ActivityItem.last
     expect(last_item).to have_attributes(
@@ -67,9 +67,9 @@ describe User, type: :model do
       description: "just broke a 4-star rating!"
     )
 
-    create(:rating, rater: create(:user), ratee: ratee, value: 5)
-    ratee.send(:update_rating)
-    expect { ratee.save }.to_not broadcast(:user_above_four_stars, ratee)
+    expect do
+      create(:rating, rater: create(:user), ratee: ratee, value: 5)
+    end.to_not broadcast(:user_above_four_stars, ratee)
 
     recent_activity = ActivityItem.where("id > ?", last_item.id)
     expect(recent_activity.map(&:description)).to_not include "just broke a 4-star rating!"
@@ -92,15 +92,12 @@ describe User, type: :model do
 
     it "is equal to an average of the user's total Rating values" do
       create(:rating, ratee: user, value: 4)
-      user.send(:update_rating)
       expect(user.rating).to eq(4.to_f.round(2))
 
       create(:rating, ratee: user, value: 3)
-      user.send(:update_rating)
       expect(user.rating).to eq(3.5.to_f.round(2))
 
       create(:rating, ratee: user, value: 5)
-      user.send(:update_rating)
       expect(user.rating).to eq(4.to_f.round(2))
     end
   end
@@ -129,8 +126,8 @@ describe User, type: :model do
     it "should assign a rating to another user" do
       second_user = create(:user)
       user.rate_user(second_user, 4)
-
-      second_user.send(:update_rating)
+      # some weird resetting going on here that requires re-lookup of the ratee
+      second_user = User.find_by(id: second_user.id)
       expect(second_user.rating).to eq(4)
     end
   end
