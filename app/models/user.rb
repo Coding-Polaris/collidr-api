@@ -23,7 +23,6 @@
 class User < ApplicationRecord
   RECENT_RATING_WINDOW = 1.month
   HIGH_RATING = 4.00
-  MAX_TIMELINE_REFRESH_ITEMS = 20
 
   %i[
     email
@@ -85,18 +84,45 @@ class User < ApplicationRecord
   end
 
   # retrieve starting from a certain time point
-  # or from last activity
-  def build_activity_timeline(time = DateTime.now, activity_id = nil)
+  def build_activity_timeline(time_from = DateTime.now, time_to = nil, limit = 20)
     items = []
+
     collidr_activity = ActivityItem.where("
         user_id = ? AND
-        updated_at <= ?
-      ", self.id, time)
+        updated_at < ?
+      ", self.id, time_from)
       .order("updated_at DESC")
-      .limit(20)
+      .limit(limit)
     items += collidr_activity
-    # items.sort_by timestamp -- Not doing til git activity in
-    items[0..19]
+
+    # if self.github_name.present?
+    #   github_activity = self.get_github_events(github_name, time_from, time_to, limit)
+    #   items += github_activity
+    #   sort_timeline(timeline)
+    # end
+
+    # it's wasteful to toss away items
+    # but I want a clean limit instead of an unpredictable glut
+    # we can make sure the next page is clean by capping at
+    # specific timestamps; i consider exact concurrency an
+    # edge case
+    items[0..limit - 1]
+  end
+
+  def get_github_events(time_from = DateTime.now, time_to = nil, limit = 20)
+    poller = GitHubPoller.new
+    poller.get_events(github_name, time_from, time_to, limit)
+  end
+
+  def sort_timeline(array)
+    array.sort_by do |item|
+      case item.class.to_s
+      when "ActivityItem"
+        item.created_at
+      when "Hash"
+        item["created_at"]
+      end
+    end
   end
 
   private
