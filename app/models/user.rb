@@ -55,6 +55,8 @@ class User < ApplicationRecord
       validates_format_of field, with: regex, allow_blank: :github_name
     end
 
+  after_create :add_github_history_import_to_job_queue, if: :github_name_present?
+
   after_save :broadcast_rating_at_or_above_four_and_set_last_high_rating_broadcast_time,
     if: :should_broadcast_high_rating
 
@@ -101,11 +103,6 @@ class User < ApplicationRecord
     #   sort_timeline(timeline)
     # end
 
-    # it's wasteful to toss away items
-    # but I want a clean limit instead of an unpredictable glut
-    # we can make sure the next page is clean by capping at
-    # specific timestamps; i consider exact concurrency an
-    # edge case
     items[0..limit - 1]
   end
 
@@ -114,21 +111,19 @@ class User < ApplicationRecord
     poller.get_events(github_name, time_from, time_to, limit)
   end
 
-  def sort_timeline(array)
-    array.sort_by do |item|
-      case item.class.to_s
-      when "ActivityItem"
-        item.created_at
-      when "Hash"
-        item["created_at"]
-      end
-    end
+  def update_rating
+    self.rating = Rating.get_average_rating_for(self)
   end
 
   private
 
-  def update_rating
-    self.rating = Rating.get_average_rating_for(self)
+  def github_name_present?
+    self.github_name.present?
+  end
+
+  def add_github_history_import_to_job_queue
+    importer = ImportGithubHistory.new
+    importer.perform(self)
   end
 
   def broadcast_rating_at_or_above_four_and_set_last_high_rating_broadcast_time
