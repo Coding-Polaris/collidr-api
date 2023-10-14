@@ -42,3 +42,5 @@ end
 
 
 gem "bootsnap", "~> 1.16"
+
+gem "httparty", "~> 0.21.0"
